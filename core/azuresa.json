@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "saType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('njb1610Name')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "mywr"
+            },
+            "properties": {
+                "accountType": "[parameters('saType')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2021-04-01-preview",
+            "name": "[variables('njb1611Name')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                "name": "standard",
+                "family": "A"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                {
+                    "tenantId": "df16422d-70a4-466d-a95c-f5a0f3115ca6",
+                    "objectId": "e35fff91-defa-4e6c-a66d-a4cc41f21578",
+                    "permissions": {
+                        "certificates": [],
+                        "keys": [],
+                        "secrets": [
+                            "get",
+                            "list"
+                        ]
+                }
+            }
+                ],
+                "enabledForDeployment": true,
+                "enabledForTemplateDeployment": true,
+                "enabledForDiskEncryption": true
+            }
+        }
+    ],
+    "variables": {
+        "njb1610Name": "[concat('njb1610', uniqueString(resourceGroup().id))]",
+        "njb1611Name": "[concat('njb1610', uniqueString(resourceGroup().id))]"
+    }
+}

@@ -1,0 +1,52 @@
+# .github/workflows/deploy-azure-arm.yml
+
+name: Deploy Azure ARM Template
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'core/**'
+  workflow_dispatch:
+
+jobs:
+  
+  set-env:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Environment Variable
+        run: |
+          echo "TIME_HEX=$(printf '%x' $(date +%s))" >> $GITHUB_ENV
+
+  print-hextime:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: print Environment Variable
+        run: |
+          echo $TIME_HEX
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: ARM Template Toolkit (ARM TTK) Validation
+        id: armttkvalidation
+        uses: aliencube/arm-ttk-actions@v0.3
+        with:
+          path: core/azuresa.json 
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: mywr
+          template: ./core/azuresa.json
+        
