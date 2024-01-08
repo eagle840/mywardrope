@@ -46,7 +46,6 @@ jobs:
 
       - uses: azure/arm-deploy@v1
         with:
-          scope: resourcegroup
           resourceGroupName: mywr
           template: ./core/azuresa.json
         
