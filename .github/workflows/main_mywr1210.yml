@@ -27,7 +27,7 @@ jobs:
 
       - name: Build with dotnet
         run: |
-           pwd
+           dir
            dotnet build --configuration Release -p .\mywr\mywr.csproj
 
       - name: dotnet publish
